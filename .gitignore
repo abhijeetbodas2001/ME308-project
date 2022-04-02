@@ -1,0 +1,11 @@
+*
+!.gitignore
+!city.mod
+!city.run
+!city.dat
+!highway.mod
+!highway.run
+!highway.dat
+!example_model.mod
+!LICENSE
+!README
