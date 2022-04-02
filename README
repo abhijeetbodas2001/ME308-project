@@ -1,0 +1,13 @@
+Contains AMPL code written as part of the ME308 (Industril engineering
+and operations research) course project during Jan-Apr 2022.
+
+# Project team
+- Abhijeet Prasad Bodas
+- Shiven Amol Barbare
+- Guguloth Praveen
+- Nikith Veerpaneni
+
+# Usage
+- Install AMPL
+- Clone this repository into AMPL's directory
+- Run `include city.mod` in the AMPL shell
