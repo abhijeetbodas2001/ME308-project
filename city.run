@@ -1,0 +1,5 @@
+reset;
+option solver "./cplex";
+model city.mod;
+data city.dat;
+solve;
