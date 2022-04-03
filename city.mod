@@ -1,15 +1,20 @@
 # i: 1 to N denotes charging station locations
 # j: 1 to M denotes demand hotspots
+# k: 1 to L denotes the different types of demands (to accomodate different
+#           charging technologies, battery capacities etc)
 
 param n;
 param m;
+param l;
 param budget;
 
 # Cost incurred for building a charging station at location `i`
 param building_cost{i in 1..n};
 
+param station_capacity{i in 1..n, k in 1..l};
+
 # Value of the demand for charging at location `j`
-param demand{j in 1..m};
+param demand{j in 1..m, k in 1..l};
 
 # loss[i][j] represents the loss when a vehicle at `j` has to travel
 # to station `i` for charging
@@ -27,11 +32,17 @@ var y{i in 1..n, j in 1..m} binary;
 var actual_loss{j in 1..m} >= 0;
 
 minimize Objective:
-    sum{j in 1..m} demand[j]*actual_loss[j]
+    sum{j in 1..m, k in 1..l} demand[j, k]*actual_loss[j]
 ;
 
 subject to budget_constraint :
     sum{i in 1..n} building_cost[i]*x[i] <= budget
+;
+
+# For each type, for each station, sum of demands coming into that
+# station should not exceed it's capacity
+subject to capacity_constraint {i in 1..n, k in 1..l}:
+    sum{j in 1..m} demand[j, k]*y[i, j] <= station_capacity[i, k]
 ;
 
 # For each `j`, assign one station `i`
