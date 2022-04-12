@@ -1,61 +1,99 @@
-# i: 1 to N denotes charging station locations
-# j: 1 to M denotes demand hotspots
-# k: 1 to L denotes the different types of demands (to accomodate different
-#           charging technologies, battery capacities etc)
-
-param n;
-param m;
-param l;
+param num_station_locations;
+param num_demand_hotspots;
+param num_types;
 param budget;
 
-# Cost incurred for building a charging station at location `i`
-param building_cost{i in 1..n};
+param building_cost{
+    station_location in 1..num_station_locations
+};
 
-param station_capacity{i in 1..n, k in 1..l};
+# If we were to build a station at this location, what would it's capacity be?
+param station_capacity{
+    station_location in 1..num_station_locations,
+    type in 1..num_types
+};
 
-# Value of the demand for charging at location `j`
-param demand{j in 1..m, k in 1..l};
+param demand{
+    hotspot in 1..num_demand_hotspots,
+    type in 1..num_types
+};
 
-# loss[i][j] represents the loss when a vehicle at `j` has to travel
-# to station `i` for charging
-# Will depend mainly on the distance/travel-time between `i` and `j`
-param loss{i in 1..n, j in 1..m};
+# Represents the loss when a vehicle at a hotspot has to travel
+# to a station for charging
+param distance{
+    station_location in 1..num_station_locations,
+    hotspot in 1..num_demand_hotspots
+};
 
-# x[i] = 1 if charging station should be built at location `i`
-var x{i in 1..n} binary;
+var should_build{
+    station_location in 1..num_station_locations
+} binary;
 
-# Stores the charging location `i` assigned to a demand point `j`
-var y{i in 1..n, j in 1..m} binary;
+# ASSUMPTION: All cars at a hotspot go to a single station for charging
+var is_assigned{
+    station_location in 1..num_station_locations,
+    hotspot in 1..num_demand_hotspots
+} binary;
 
-# The "actual" loss faced by vehicles at `j`, depending on the subset of
-# the `n` locations where charging stations are actually built
-var actual_loss{j in 1..m} >= 0;
+# Distance between hotspot and the assigned station
+var distance_penalty{
+    hotspot in 1..num_demand_hotspots
+} >= 0;
 
 minimize Objective:
-    sum{j in 1..m, k in 1..l} demand[j, k]*actual_loss[j]
+    sum{
+        hotspot in 1..num_demand_hotspots,
+        type in 1..num_types
+    }
+        demand[hotspot, type] * distance_penalty[hotspot]
 ;
 
-subject to budget_constraint :
-    sum{i in 1..n} building_cost[i]*x[i] <= budget
+subject to budget_constraint:
+    sum{
+        station_location in 1..num_station_locations
+    }
+        building_cost[station_location]*should_build[station_location]
+    <= budget
 ;
 
 # For each type, for each station, sum of demands coming into that
 # station should not exceed it's capacity
-subject to capacity_constraint {i in 1..n, k in 1..l}:
-    sum{j in 1..m} demand[j, k]*y[i, j] <= station_capacity[i, k]
+subject to capacity_constraint {
+        station_location in 1..num_station_locations,
+        type in 1..num_types
+    }:
+        sum{
+            hotspot in 1..num_demand_hotspots
+        }
+            demand[hotspot, type]*is_assigned[station_location, hotspot]
+        <= station_capacity[station_location, type]
 ;
 
-# For each `j`, assign one station `i`
-subject to sum_cons {j in 1..m}:
-    sum{i in 1..n}y[i,j] = 1;
+# Assign a single station for each hotspot (see ASSUMPTION above)
+subject to sum_cons {
+        hotspot in 1..num_demand_hotspots
+    }:
+        sum{
+            station_location in 1..num_station_locations
+        }
+            is_assigned[station_location,hotspot]
+        = 1;
 
-# Then calculate the actual loss for each `j` based on the
-# assigned `i`
-subject to actual_loss_definition {j in 1..m}:
-    actual_loss[j] = sum{i in 1..n}loss[i, j]*y[i,j]
+# Calculate distance_penalty based on assigned station
+subject to distance_penalty_definition {
+        hotspot in 1..num_demand_hotspots
+    }:
+        sum{
+            station_location in 1..num_station_locations
+        }
+            distance[station_location, hotspot]*is_assigned[station_location,hotspot]
+        = distance_penalty[hotspot]
 ;
 
-# Can only "assign" a charging station location to a demand is a
-# charging station is actually built there
-subject to var_cons{i in 1..n, j in 1..m}:
-    y[i,j] <= x[i];
+# Can only assign a station to a demand if station is actually built there
+subject to var_cons{
+        station_location in 1..num_station_locations,
+        hotspot in 1..num_demand_hotspots
+    }:
+        is_assigned[station_location,hotspot]
+    <= should_build[station_location];
