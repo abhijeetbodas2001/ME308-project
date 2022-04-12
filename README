@@ -9,4 +9,4 @@ Contains AMPL code written as part of the ME308 (Industrial Engineering and Oper
 # Usage
 - Install AMPL
 - Clone this repository into AMPL's directory
-- Run `include city.mod` in the AMPL shell
+- Run `include city.run` in the AMPL shell
