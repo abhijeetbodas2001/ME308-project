@@ -3,4 +3,4 @@ option solver "./cplex";
 model city.mod;
 data city.dat;
 solve;
-display should_build, is_assigned;
+display should_build, fraction_assigned;

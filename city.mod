@@ -29,11 +29,10 @@ var should_build{
     station_location in 1..num_station_locations
 } binary;
 
-# ASSUMPTION: All cars at a hotspot go to a single station for charging
-var is_assigned{
+var fraction_assigned{
     station_location in 1..num_station_locations,
     hotspot in 1..num_demand_hotspots
-} binary;
+} >= 0;
 
 # Distance between hotspot and the assigned station
 var distance_penalty{
@@ -65,18 +64,17 @@ subject to capacity_constraint {
         sum{
             hotspot in 1..num_demand_hotspots
         }
-            demand[hotspot, type]*is_assigned[station_location, hotspot]
+            demand[hotspot, type]*fraction_assigned[station_location, hotspot]
         <= station_capacity[station_location, type]
 ;
 
-# Assign a single station for each hotspot (see ASSUMPTION above)
 subject to sum_cons {
         hotspot in 1..num_demand_hotspots
     }:
         sum{
             station_location in 1..num_station_locations
         }
-            is_assigned[station_location,hotspot]
+            fraction_assigned[station_location,hotspot]
         = 1;
 
 # Calculate distance_penalty based on assigned station
@@ -86,7 +84,7 @@ subject to distance_penalty_definition {
         sum{
             station_location in 1..num_station_locations
         }
-            distance[station_location, hotspot]*is_assigned[station_location,hotspot]
+            distance[station_location, hotspot]*fraction_assigned[station_location,hotspot]
         = distance_penalty[hotspot]
 ;
 
@@ -95,5 +93,12 @@ subject to var_cons{
         station_location in 1..num_station_locations,
         hotspot in 1..num_demand_hotspots
     }:
-        is_assigned[station_location,hotspot]
+        fraction_assigned[station_location,hotspot]
     <= should_build[station_location];
+
+subject to fractional_demand{
+    station_location in 1..num_station_locations,
+    hotspot in 1..num_demand_hotspots
+    }:
+        fraction_assigned[station_location, hotspot] <= 1
+;
