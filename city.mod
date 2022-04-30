@@ -1,17 +1,17 @@
 param num_station_locations;
 param num_demand_hotspots;
-#param num_types;
+param num_types;
 param num_to_build;
 
 # If we were to build a station at this location, what would it's capacity be?
-#param station_capacity{
-#    station_location in 1..num_station_locations,
-#    type in 1..num_types
-#};
+param station_capacity{
+    station_location in 1..num_station_locations,
+    type in 1..num_types
+};
 
 param demand{
-    hotspot in 1..num_demand_hotspots
-    #type in 1..num_types
+    hotspot in 1..num_demand_hotspots,
+    type in 1..num_types
 };
 
 param distance{
@@ -35,11 +35,11 @@ var distance_penalty{
 
 minimize Objective:
     sum{
-        hotspot in 1..num_demand_hotspots
-        #type in 1..num_types
+        hotspot in 1..num_demand_hotspots,
+        type in 1..num_types
     }
-        #demand[hotspot, type] * distance_penalty[hotspot]
-        demand[hotspot] * distance_penalty[hotspot]
+        demand[hotspot, type] * distance_penalty[hotspot]
+        #demand[hotspot] * distance_penalty[hotspot]
 ;
 
 subject to should_build_exactly_num_to_build:
@@ -52,16 +52,16 @@ subject to should_build_exactly_num_to_build:
 
 # For each type, for each station, sum of demands coming into that
 # station should not exceed it's capacity
-#subject to capacity_constraint {
-#        station_location in 1..num_station_locations,
-#        type in 1..num_types
-#    }:
-#        sum{
-#            hotspot in 1..num_demand_hotspots
-#        }
-#            demand[hotspot, type]*fraction_assigned[station_location, hotspot]
-#        <= station_capacity[station_location, type]
-#;
+subject to capacity_constraint {
+        station_location in 1..num_station_locations,
+        type in 1..num_types
+    }:
+        sum{
+            hotspot in 1..num_demand_hotspots
+        }
+            demand[hotspot, type]*fraction_assigned[station_location, hotspot]
+        <= station_capacity[station_location, type]
+;
 
 subject to should_assign_all_demands_to_some_station {
         hotspot in 1..num_demand_hotspots
