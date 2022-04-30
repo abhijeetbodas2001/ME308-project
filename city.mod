@@ -95,10 +95,3 @@ subject to var_cons{
     }:
         fraction_assigned[station_location,hotspot]
     <= should_build[station_location];
-
-subject to fractional_demand{
-    station_location in 1..num_station_locations,
-    hotspot in 1..num_demand_hotspots
-    }:
-        fraction_assigned[station_location, hotspot] <= 1
-;
