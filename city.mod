@@ -1,11 +1,10 @@
 param num_station_locations;
 param num_demand_hotspots;
 param num_to_build;
+param budget;
 
-# If we were to build a station at this location, what would it's capacity be?
-param station_capacity{
-    station_location in 1..num_station_locations
-};
+# 0 denotes "do not build here"
+set possible_station_capacities = {0, 1, 2, 3};
 
 param demand{
     hotspot in 1..num_demand_hotspots
@@ -18,7 +17,7 @@ param distance{
 
 var should_build{
     station_location in 1..num_station_locations
-} binary;
+} in possible_station_capacities;
 
 var fraction_assigned{
     station_location in 1..num_station_locations,
@@ -38,12 +37,12 @@ minimize Objective:
         #demand[hotspot] * distance_penalty[hotspot]
 ;
 
-subject to should_build_exactly_num_to_build:
+subject to budget_constraint:
     sum{
         station_location in 1..num_station_locations
     }
         should_build[station_location]
-    <= num_to_build
+    <= budget
 ;
 
 # Sum of demands coming into that station should not exceed it's capacity
@@ -53,8 +52,8 @@ subject to capacity_constraint {
         sum{
             hotspot in 1..num_demand_hotspots
         }
-            demand[hotspot]*fraction_assigned[station_location, hotspot]
-        <= station_capacity[station_location]
+            demand[hotspot]*fraction_assigned[station_location, hotspot]    # Demand must be scaled here
+        <= should_build[station_location]
 ;
 
 subject to should_assign_all_demands_to_some_station {
@@ -83,4 +82,3 @@ subject to cannot_assign_to_unbuilt_station{
     }:
         fraction_assigned[station_location,hotspot]
     <= should_build[station_location];
-    # This also enforces fraction_assigned[station_location,hotspot] <= 1
