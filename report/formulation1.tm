@@ -11,23 +11,17 @@
 
   <\enumerate-numeric>
     <item>All vehicles from a particular demand hotspot travel to a single
-    charging station i.e the map from demand hotspots to charging station
-    location is a one-to-one map. There is no splitting of vehicles into
-    multiple charging stations.
+    charging station. There is no splitting of vehicles into multiple
+    charging stations.
 
-    <item>This map is such that the vehicles travel to the nearest available
-    charging station. If the closest charging station cannot accomodate all
-    the vehicles from a particular demand hotspots, then the vehicles would
-    move to the next closest charging station which can accomodate all the
-    vehicles.
+    <item>All vehicles at any demand hotspot always go to the nearest
+    charging station available.
 
-    <item>The number of charging stations that can be built is taken as an
-    input and will dictate the addignment of demand hotspots to charging
-    stations
+    <item>All the charging stations which can be built are assumed to be
+    identical in costs and size.
 
-    <item>The goal is to minimize the total distance travelled by vehicles
-    from all the demand hotspots as they travel to the assigned charging
-    stations
+    <item>Each charging station that we build has a very high capacity, and
+    can handle as many demands as arrive at it.
   </enumerate-numeric>
 
   <subsection*|Parameters>
@@ -53,11 +47,13 @@
 
   \;
 
-  Apart from the parameters mentioned above, another variable is important
-  for the formulation viz. the Distance Penalty/Loss,
-  <math|<with|font-series|bold|L<rsub|j>>>. It us defined as the distance
+  Apart from the parameters mentioned above, another variable important which
+  we define for the formulation is the <with|font-series|bold|Distance
+  Penalty>, or the <with|font-series|bold|Loss>,
+  <math|<with|font-series|bold|L<rsub|j>>>. It is defined as the distance
   between \ demand location <math|j> when it and its
-  <with|font-series|bold|assigned> charging station.
+  <with|font-series|bold|assigned> charging station. The \Passigned\Q
+  charging station is in fact the closest charging station in our case.
 
   <subsection*|Decision Variables>
 
@@ -66,7 +62,7 @@
   These are:
 
   <\itemize-dot>
-    <item><with|font-series|bold|assgnment variable, <math|\<alpha\>
+    <item><with|font-series|bold|Assginment variable, <math|\<alpha\>
     <rsub|i,j>>> <with|font-series|bold|>- Binary
   </itemize-dot>
 
@@ -77,8 +73,8 @@
   </equation*>
 
   <\itemize-dot>
-    <item><with|font-series|bold|should_build variable, <math|x<rsub|i>>>
-    <with|font-series|bold|>- Binary
+    <item><with|font-series|bold|Should-build decision variable,
+    <math|x<rsub|i>>> <with|font-series|bold|>- Binary
   </itemize-dot>
 
   <center| <larger| <center| <math|<tabular|<tformat|<table|<row|<cell|x<rsub|i>>|<cell|=>|<cell|<choice|<tformat|<table|<row|<cell|0,>|<cell|<text|if
@@ -88,9 +84,9 @@
 
   <subsection*|Objective Function>
 
-  The objective function should minimize the combined ditance travvled by all
-  the vehicels as they travel to their assigned charging stations. This is
-  represented mathematically as
+  The objective function should minimize the combined ditance travelled by
+  all the vehicles as they travel to their assigned charging stations. This
+  is represented mathematically as:
 
   <center|minimize <math|<big|sum><rsub|j><rsup|>D<rsub|j>\<times\>
   L<rsub|j>>>
@@ -106,10 +102,12 @@
   <with|font-shape|italic|<with|font-series|medium|Assignment variable
   bounds>>
 
-  The assignemnt variable should be such that, if a station is not built at a
-  charging station location, the it has to be zero. However if the station is
-  built at \ location <math|i>, then <math|\<alpha\><rsub|i,j>> can be 0 or 1
-  depending on whether demand hotspot <math|j> is assigned to <math|i> or not
+  If a station is not built at a certain location (<math|x<rsub|i>=0>), then
+  we cannot assign this location to any demand (<math|\<alpha\><rsub|i,j>=0
+  >must hold for all <math|j>'s). However if the station is built at
+  \ location <math|i>, then <math|\<alpha\><rsub|i,j>> can be 0 or 1
+  depending on whether demand hotspot <math|j> is assigned to <math|i> or
+  not. Hence,
 
   <\equation*>
     0\<leqslant\>\<alpha\><rsub|i,j>\<leqslant\>x<rsub|i><space|1em>\<forall\>i\<in\>
@@ -119,8 +117,8 @@
   <with|font-shape|italic|<with|font-series|medium|Exactly one assignment>>
 
   This constraint ensures that only one <math|\<alpha\><rsub|i,j>> is 1 and
-  the rest are zero (this putis ib place the one-to-one map discussed
-  earlier)
+  the rest are zero, that is, each demand is assigned one and only one
+  charging station. This puts in place the one-to-one map discussed earlier.
 
   <\equation*>
     <big|sum><rsup|N><rsub|i=1>\<alpha\><rsub|i,j>=1
@@ -142,13 +140,13 @@
   <math|i> and one of the charging station locations among the <math|N>. The
   rationale behind this definition is that when this is passed to the
   objective function, only station which minimizes <math|L<rsub|j> > is
-  chosen and the assignment is made to the closest available charging
-  station.
+  chosen and the assignment is made to the <with|font-series|bold|closest
+  available charging station> location.
 
   <with|font-series|medium|<with|font-shape|italic|Number of stations>>
 
-  The total number of charging stations built should not exceed the maximimum
-  number allowed (<math|G>)
+  The number of stations which our model suggests building should be equal to
+  the number required to be built (which is, <math|G>). Thus:
 
   <\equation*>
     <big|sum><rsup|N><rsub|i=1>x<rsub|i>=G
@@ -165,12 +163,41 @@
 
 <\references>
   <\collection>
-    <associate|auto-1|<tuple|?|?>>
-    <associate|auto-2|<tuple|?|?>>
-    <associate|auto-3|<tuple|4|?>>
-    <associate|auto-4|<tuple|4|?>>
-    <associate|auto-5|<tuple|<with|mode|<quote|math>|\<bullet\>>|?>>
-    <associate|auto-6|<tuple|<with|mode|<quote|math>|\<bullet\>>|?>>
-    <associate|auto-7|<tuple|<with|mode|<quote|math>|\<bullet\>>|?>>
+    <associate|auto-1|<tuple|?|1>>
+    <associate|auto-2|<tuple|?|1>>
+    <associate|auto-3|<tuple|4|1>>
+    <associate|auto-4|<tuple|4|1>>
+    <associate|auto-5|<tuple|<with|mode|<quote|math>|\<bullet\>>|2>>
+    <associate|auto-6|<tuple|<with|mode|<quote|math>|\<bullet\>>|2>>
   </collection>
 </references>
+
+<\auxiliary>
+  <\collection>
+    <\associate|toc>
+      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Formulation
+      1.0> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-1><vspace|0.5fn>
+
+      <with|par-left|<quote|1tab>|Assumptions
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-2>>
+
+      <with|par-left|<quote|1tab>|Parameters
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-3>>
+
+      <with|par-left|<quote|1tab>|Decision Variables
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-4>>
+
+      <with|par-left|<quote|1tab>|Objective Function
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-5>>
+
+      <with|par-left|<quote|1tab>|Constraints
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-6>>
+    </associate>
+  </collection>
+</auxiliary>

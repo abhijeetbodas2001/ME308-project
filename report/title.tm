@@ -15,13 +15,18 @@
   <center|>
 
   <\center>
-    <with|font-series|bold|Course Project>
+    <with|font-series|bold|<larger| Course Project>>
 
     <underline|ME308 : Industrial Engineering and Operations Research (Spring
-    2021-22)>\ 
+    2021-22)>
+
+    <with|font-shape|italic|Under the guidance of: Prof. Avinash Bhardwaj and
+    Prof. Makarand Kulkarni>\ 
 
     <with|font-shape|italic|Depatment of Mechanical Engineering, IIT Bombay>
   </center>
+
+  \;
 
   \;
 
@@ -38,10 +43,8 @@
   \;
 
   <\quote-env>
-    <with|font-series|bold|<with|font-base-size|14|<center|REPORT>>>
+    <with|font-series|bold|<with|font-base-size|14|<center|Work Report>>>
   </quote-env>
-
-  \;
 
   \;
 
@@ -67,7 +70,8 @@
   Bodas >|<cell|Shiven Barbare>|<cell|Praveen Guguloth>|<cell|Nikith
   Veerapaneni>>|<row|<cell|190100004>|<cell|190100110>|<cell|190100050>|<cell|190100134>>>>>>
 
-  \;
+  <center| <hlink|Code available at the GitHub
+  repository|https://github.com/abhijeetbodas2001/ME308-project/>>
 </body>
 
 <\initial>

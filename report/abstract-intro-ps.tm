@@ -34,32 +34,43 @@
   <\itemize>
     <item>Economical in the long run (low Total Cost of Ownership)
 
-    <item>No emissions
+    <item>Much fewer emissions than IC engine based vahicles
 
     <item>Quiet operation (no sound pollution)
 
-    <item>Smooth running
+    <item>Smooth running and good pickup
 
-    <item>Good resale value\ 
+    <item>Good resale value
   </itemize>
 
   However, the limiting factors to the growth of the industry today are
 
   <\itemize>
-    <item>Lack of infrastructure
+    <item>Lack of infrastructure available for charging
 
-    <item>High purchase costs\ 
+    <item>High purchase costs, and maintainance costs (mainly in the form of
+    battery replacements)
   </itemize>
 
   <section*|Problem Statement>
 
-  This projet aims to optimize a charging station network in a city assuming
-  no existing charging infrastructure. The city is divided into several
-  <with|font-series|bold|demand hotspots>, where the demand of a particular
-  locality is assumed to be concentrated. Given a set of possible locations
-  for constructing charging stations, we need to choose a subset which will
-  lead to minimum total customer travel from demand hotspots to charging
-  stations.
+  We assume the role of a <with|font-series|bold|policy consultant>, working
+  with the government, which has decided to build a charging network in a
+  city like Mumbai, to decide where to place the charging stations. The main
+  reason for governments to do this is to increase EV adoptation by people in
+  the city, and encourage car-buyers (many of whom still think that EVs are
+  impractical because of charging availability issues) to buy EVs. While it
+  is true that many car manufacturers do provide at-home charging setup
+  installations, having a network in place would make it possible to buy an
+  EV without such a setup, thus reducing costs, and increasing EV adoption
+  rates. Thus, the project aims to optimize a charging station network in a
+  city assuming no existing charging infrastructure.
+
+  The city is divided into several <with|font-series|bold|demand hotspots>,
+  where the demand of a particular locality is assumed to be concentrated.
+  Given a set of possible locations for constructing charging stations, we
+  need to choose a subset which will lead to minimum total customer travel
+  from demand hotspots to charging stations.
 
   The problem is tackled by a mathemtaical
   <with|font-series|bold|formulation> that has evolved over the course of of
